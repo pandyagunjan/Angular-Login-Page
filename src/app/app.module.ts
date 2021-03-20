@@ -3,7 +3,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SignupFormComponent } from './components/signup-form/signup-form.component';
 import { SignupDetailsComponent } from './components/signup-details/signup-details.component';
@@ -21,12 +21,14 @@ export const appRoutes: Routes = [
 @NgModule({
   declarations: [
     AppComponent,
+    
     SignupFormComponent,
     SignupDetailsComponent,
     FieldmatchesDirective,
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,

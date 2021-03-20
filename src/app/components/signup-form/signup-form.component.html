@@ -44,7 +44,7 @@
     </div> -->
     <!-- <div class="form-group">
         <label>Phone Number</label>
-            <input ngModel class="form-control" name="phoneNumber" id="phoneNumber" type="tel" formControlName="phoneNumber">
+            <input ngModel class="form-control" name="phoneNumber" type="tel" formControlName="phoneNumber">
         <div *ngIf = "phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)" class="form-error form-phonenumber-error"> 
             <div *ngIf = "phoneNumber.errors.pattern"> 
                <div class="form-error form-phonenumber-error">
@@ -56,20 +56,20 @@
 
    <div class="form-group">
         <label>Country</label>
-        <select id="countrySelect" class="form-control" name="country" formControlName="country">          
+        <select class="form-control" name="country" formControlName="country" required (change)="getStateBasedOnCountry($event.target.value)">          
           <option value="">--Select Country--</option> 
-            <option *ngFor = "let country of countries" value={{country?.id}}>
+            <option *ngFor = "let country of countries" [value]="country.id">
                   {{country?.name}} 
             </option>
         </select>
 
-         <!-- <div *ngIf = "country.invalid && (country.dirty || country.touched)" class="form-error form-country-error">
+          <div *ngIf = "country.invalid && (country.dirty || country.touched)" class="form-error form-country-error">
             <div *ngIf = "country.errors.required"> 
-           <div class="form-error form-country-error">
-            This country is not available
-          </div>
-          </div>
-          </div> -->
+                    <div class="form-error form-country-error">
+                    This country is not available
+                    </div>
+             </div>
+          </div> 
 
     </div> 
 
@@ -82,9 +82,13 @@
             </option>
         </select>
 
-        <!-- <div class="form-error form-state-error">
-            This state is not available
-        </div> -->
+        <div *ngIf = "state.invalid && (state.dirty || state.touched)" class="form-error form-state-error">
+            <div *ngIf = "state.errors.required"> 
+                    <div class="form-error form-state-error">
+                        This state is not available
+                    </div>
+             </div>
+          </div> 
     </div>
     
     <div class="form-group">
