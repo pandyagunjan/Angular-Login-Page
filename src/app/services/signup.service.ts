@@ -14,9 +14,10 @@ export class SignupService {
   constructor() { }
 
   public saveData(data: any): Observable<SignupData> {
+    console.log("From signup Services" , data);;
     return new Observable((observer) => {
-      const { username, email, phoneNumber, country, state } = data || {} as any;
-  //    this.signupDataSubject.next({ username, email, phoneNumber, country, state });
+      const { username, email, phoneNumber, country, state ,password,confirmPassword } = data || {} as any;
+     this.signupDataSubject.next({ username, email, phoneNumber, country, state ,password,confirmPassword});
       observer.complete();
     });
   }

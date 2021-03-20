@@ -18,6 +18,8 @@ class FakeSignupService {
     country: 'United States',
     state: 'Delaware',
     phoneNumber: '(999) 999-9999',
+    password : "Gunjan123",
+    confirmPassword: "Gunjan123"
   };
 
   getData(): Observable<SignupData> {
