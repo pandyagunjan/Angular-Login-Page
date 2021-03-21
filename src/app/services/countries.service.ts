@@ -13,8 +13,8 @@ import { State } from '../models/state.model';
 export class CountriesService {
 
   constructor(private http: HttpClient) { }
-  // filter and map !!
-  //cannot return <any> - Not good pratice! <Country>.
+  //filter and map !!
+  //cannot return <any> - Not good pratice! <Country[]>.
 
 
   public getCountries(): Observable<Country[]> {
@@ -32,7 +32,8 @@ export class CountriesService {
 
   public getStates(countryId: number): Observable<State[]> {
     console.log("Country Id from SERVICES", countryId);
-    console.log("THS LIST IN SERVICE : ",this.http.get<any>("assets/data.json").pipe(map(res => res["states"].filter(res => res.countryId === countryId))));
-    return this.http.get<State[]>("assets/data.json").pipe(map(res => res["states"].filter(res => res.countryId === countryId)));
+   // console.log("THS LIST IN SERVICE : ",this.http.get<any>("assets/data.json").pipe(map(res => res["states"].filter(res => res.countryId === countryId))));
+    return this.http.get<State[]>("assets/data.json").pipe(map(res => res["states"].filter(res => res.countryId == countryId)));
+    
    }
 }
