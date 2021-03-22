@@ -20,9 +20,13 @@ export class SignupService {
      this.signupDataSubject.next({ username, email, phoneNumber, country, state ,password,confirmPassword});
       observer.complete();
     });
+
+    //
   }
 
   public getData() {
+    console.log(this.signupData);
+    
     return this.signupData;
   }
 }

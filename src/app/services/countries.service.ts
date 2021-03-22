@@ -32,7 +32,7 @@ export class CountriesService {
 
   public getStates(countryId: number): Observable<State[]> {
     console.log("Country Id from SERVICES", countryId);
-   // console.log("THS LIST IN SERVICE : ",this.http.get<any>("assets/data.json").pipe(map(res => res["states"].filter(res => res.countryId === countryId))));
+   //Does not work when use === https://www.w3schools.com/js/js_comparisons.asp
     return this.http.get<State[]>("assets/data.json").pipe(map(res => res["states"].filter(res => res.countryId == countryId)));
     
    }

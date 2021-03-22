@@ -37,7 +37,9 @@
    </div>
   <!-- <div class="form-group">
         <label>Repeat Password</label>
-        <input type="password" name="password_match" class="form-control" required>
+        <input type="confirmPassword" name="confirmPassword" class="form-control" id="confirmPassword" formControlName="confirmPassword">
+        <input type="password" name="password_match" class="form-control" required> -->
+        <!-- <div *ngIf="confirmPassword.errors.confirmedValidator">Password and Confirm Password must be match.</div>
         <div class="form-error form-password_match-error">
             Passwords should match
         </div>
@@ -57,7 +59,7 @@
    <div class="form-group">
         <label>Country</label>
         <select class="form-control" name="country" formControlName="country" required (change)="getStateBasedOnCountry($event.target.value)">          
-          <option value="">--Select Country--</option> 
+          <option selected ="selected" value="">--Select Country--</option> 
             <option *ngFor = "let country of countries" [value]="country.id">
                   {{country?.name}} 
             </option>
@@ -75,8 +77,8 @@
 
     <div class="form-group">
         <label>State</label>
-        <select class="form-control" name="state" required>
-            <option value="">--Select State--</option>
+        <select class="form-control" name="state" formControlName="state" required>
+            <option selected value="">--Select State--</option>
             <option *ngFor = "let state of filteredStates" value ={{state?.id}}>
                 {{state?.name}} 
             </option>
@@ -92,6 +94,6 @@
     </div>
     
     <div class="form-group">
-        <button (click)="onSubmit()" type="submit" class="btn btn-primary btn-block">Sign up</button>
+        <button (click)="onSubmit()" type="submit" class="btn btn-primary btn-block" [disabled]="profileForm.invalid">Sign up</button>
     </div>
 </form>
