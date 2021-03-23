@@ -7,8 +7,10 @@ import { SignupService } from '../../services/signup.service';
 import { SignupData } from '../../models/signup-data.model';
 import { Country } from '../../models/country.model';
 import { State } from '../../models/state.model';
-import { subscribeOn } from 'rxjs/operators';
+import { subscribeOn, tap } from 'rxjs/operators';
 import { interval, Subscription } from 'rxjs';
+import { ConfirmedValidator } from '../../confirmed.validator';
+    
 
 @Component({
   selector: 'signup-form',
@@ -24,7 +26,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
   allStates : State[];
 //Subscription objects created so that the unsusbcribe on onDestroy is done
  subscriptionCountry : Subscription
- subscriptionState : Subscription
+ subscriptionStates : Subscription[] = [] //Throws error
  subscriptionSignUp : Subscription
 
 
@@ -32,10 +34,10 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
     username: '',
     email: '',
     country: '',
-    state: 'Arkansas',
+    state: '',
     phoneNumber: '955-555-4584',
     password : "",
-    confirmPassword: "Gunjan@123"
+    confirmPassword: ""
   };
 
   //submitUser : SignupData = {};
@@ -51,12 +53,12 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
     private signupService: SignupService, 
     private router: Router) {  }
 
-  
+    countries$=this.countriesService.countries$;
 
   ngOnInit():void {
 
     // On Load, get all countries and set the valdiators on profileForm.
-    this.getAllCountries();
+    //this.getAllCountries();
 
     this.profileForm = this.fb.group({
       username: [, Validators.required],
@@ -65,6 +67,10 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
       //phoneNumber: ['', [Validators.required, Validators.pattern('^\+\d(-\d{3}){2}-\d{4}$')]]// 10 numbers
       country: [, Validators.required],
       state: [, Validators.required],
+    //   confirmPassword :['', [Validators.required]]
+    // }, { 
+    //   validator: ConfirmedValidator('password', 'confirm_password')
+    // })
     });
   }
 
@@ -81,53 +87,57 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
 
   }
 
-  getAllCountries()
-  {
-    //2 types observable hot and cold observable - (Memory leak) Best Preatice - Subscribe and unsubscirbe 
-     this.subscriptionCountry=this.countriesService.getCountries().subscribe(
-     data => {
-     this.countries=data;
-     console.log("Countries" , this.countries);
-    },
-    error => {
-      console.log(error);
-      }
+  // getAllCountries()
+  // {
+  //   //2 types observable hot and cold observable - (Memory leak) Best Preatice - Subscribe and unsubscirbe 
+  //    this.subscriptionCountry=this.countriesService.getCountries().subscribe(
+  //    data => {
+  //    this.countries=data;
+  //    console.log("Countries" , this.countries);
+  //   },
+  //   error => {
+  //     console.log(error);
+  //     }
   
-    );
+  //   );
 
-    // lifecycle hooks - Angular components (distroy - you can unsubscribe here) 
-    //Design pattern - 
-  }
+  //   // lifecycle hooks - Angular components (distroy - you can unsubscribe here) 
+  //   //Design pattern - 
+  // }
 // Get the state based on country selected
 //Currently , the id is passed but no list sent back from service
-  getStateBasedOnCountry(countryId:number)
-  {  
-        console.log("The Id received from Country selection:" ,countryId);
-        if(countryId)
-        {
-          this.subscriptionState=this.countriesService.getStates(countryId).subscribe(
-        data => {
-         this.filteredStates = data;
-         console.log("Filtered State" , this.filteredStates);
-           },
-         error => {
-           console.log(error);
-           }         
+  // getStateBasedOnCountry(countryId:number)
+  // {  
+  //   //Array the subscription ..as the subscription does not get override..
 
-      );
-          }
-          else{
-            console.log("ELSE PART as no CountryId")
-            this.filteredStates=null;
-          }
-  }
+  //       console.log("The Id received from Country selection:" ,countryId);
+  //       if(countryId)
+  //       {
+  //         this.subscriptionStates.push(this.countriesService.getStates(countryId).subscribe(
+  //       data => {
+  //        this.filteredStates = data;
+  //        console.log("Filtered State" , this.filteredStates);
+  //          },
+  //        error => {
+  //          console.log(error);
+  //          }         
+
+  //     ));
+  //         }
+  //         else{
+  //           console.log("ELSE PART as no CountryId")
+  //           this.filteredStates=null;
+  //         }
+  // }
+
 
   //submit(form: NgForm) {
     onSubmit(){
       this.setUser();
       console.log("Users data is set in Object");
       this.router.navigate(['myaccount']);
-      this.subscriptionSignUp=this.signupService.saveData(JSON.stringify(this.user)).subscribe(
+      //No Stringfy needed - Just pass the object , stringfy used to COMPARE (for example)
+      this.subscriptionSignUp=this.signupService.saveData(this.user).subscribe(
         response => {
          console.log(response);
          console.log('Registration successful');
@@ -154,6 +164,10 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
     return this.profileForm.get('password');
   }
 
+  get confirmPassword(){
+    return this.profileForm.get('confirmPassword');
+  }
+
   get username()
   {
     return this.profileForm.get('username');
@@ -177,7 +191,9 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
   ngOnDestroy()
   {
     this.subscriptionCountry.unsubscribe();
-  //  this.subscriptionState.unsubscribe();
+    this.subscriptionStates.forEach((sub) => sub.unsubscribe())
     this.subscriptionSignUp.unsubscribe();
   }
+
+  // Plugin Prettier and VSCode ..
 }
