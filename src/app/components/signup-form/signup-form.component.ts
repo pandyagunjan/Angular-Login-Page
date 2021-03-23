@@ -130,6 +130,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
           }
   }
 
+  
   //submit(form: NgForm) {
     onSubmit(){
       this.setUser();
