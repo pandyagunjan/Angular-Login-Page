@@ -7,7 +7,7 @@ import { SignupService } from '../../services/signup.service';
 import { SignupData } from '../../models/signup-data.model';
 import { Country } from '../../models/country.model';
 import { State } from '../../models/state.model';
-import { subscribeOn } from 'rxjs/operators';
+import { subscribeOn, tap } from 'rxjs/operators';
 import { interval, Subscription } from 'rxjs';
 import { ConfirmedValidator } from '../../confirmed.validator';
     
@@ -53,7 +53,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
     private signupService: SignupService, 
     private router: Router) {  }
 
-  
+    countries$=this.countriesService.countries$;
 
   ngOnInit():void {
 
@@ -130,7 +130,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
           }
   }
 
-  
+
   //submit(form: NgForm) {
     onSubmit(){
       this.setUser();

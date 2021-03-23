@@ -58,7 +58,8 @@
 
    <div class="form-group">
         <label>Country</label>
-        <select class="form-control" name="country" formControlName="country" required (change)="getStateBasedOnCountry($event.target.value)">          
+        <!-- <select class="form-control" name="country" formControlName="country" required (change)="getStateBasedOnCountry($event.target.value)">           -->
+            <select class="form-control" name="country" formControlName="country" required *ngIf="countries$ | async as countries">
           <option selected ="selected" value="">--Select Country--</option> 
             <option *ngFor = "let country of countries" [value]="country.id">
                   {{country?.name}} 
