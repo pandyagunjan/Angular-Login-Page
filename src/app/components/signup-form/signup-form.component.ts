@@ -58,7 +58,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
   ngOnInit():void {
 
     // On Load, get all countries and set the valdiators on profileForm.
-    this.getAllCountries();
+    //this.getAllCountries();
 
     this.profileForm = this.fb.group({
       username: [, Validators.required],
@@ -87,48 +87,48 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
 
   }
 
-  getAllCountries()
-  {
-    //2 types observable hot and cold observable - (Memory leak) Best Preatice - Subscribe and unsubscirbe 
-     this.subscriptionCountry=this.countriesService.getCountries().subscribe(
-     data => {
-     this.countries=data;
-     console.log("Countries" , this.countries);
-    },
-    error => {
-      console.log(error);
-      }
+  // getAllCountries()
+  // {
+  //   //2 types observable hot and cold observable - (Memory leak) Best Preatice - Subscribe and unsubscirbe 
+  //    this.subscriptionCountry=this.countriesService.getCountries().subscribe(
+  //    data => {
+  //    this.countries=data;
+  //    console.log("Countries" , this.countries);
+  //   },
+  //   error => {
+  //     console.log(error);
+  //     }
   
-    );
+  //   );
 
-    // lifecycle hooks - Angular components (distroy - you can unsubscribe here) 
-    //Design pattern - 
-  }
+  //   // lifecycle hooks - Angular components (distroy - you can unsubscribe here) 
+  //   //Design pattern - 
+  // }
 // Get the state based on country selected
 //Currently , the id is passed but no list sent back from service
-  getStateBasedOnCountry(countryId:number)
-  {  
-    //Array the subscription ..as the subscription does not get override..
+  // getStateBasedOnCountry(countryId:number)
+  // {  
+  //   //Array the subscription ..as the subscription does not get override..
 
-        console.log("The Id received from Country selection:" ,countryId);
-        if(countryId)
-        {
-          this.subscriptionStates.push(this.countriesService.getStates(countryId).subscribe(
-        data => {
-         this.filteredStates = data;
-         console.log("Filtered State" , this.filteredStates);
-           },
-         error => {
-           console.log(error);
-           }         
+  //       console.log("The Id received from Country selection:" ,countryId);
+  //       if(countryId)
+  //       {
+  //         this.subscriptionStates.push(this.countriesService.getStates(countryId).subscribe(
+  //       data => {
+  //        this.filteredStates = data;
+  //        console.log("Filtered State" , this.filteredStates);
+  //          },
+  //        error => {
+  //          console.log(error);
+  //          }         
 
-      ));
-          }
-          else{
-            console.log("ELSE PART as no CountryId")
-            this.filteredStates=null;
-          }
-  }
+  //     ));
+  //         }
+  //         else{
+  //           console.log("ELSE PART as no CountryId")
+  //           this.filteredStates=null;
+  //         }
+  // }
 
 
   //submit(form: NgForm) {
