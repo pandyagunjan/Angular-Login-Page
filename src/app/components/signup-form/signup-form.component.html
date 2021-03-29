@@ -59,15 +59,16 @@
 
    <div class="form-group">
         <label>Country</label>
+        <!-- aysnc pipe - automatic subscribe and unsubscribe ,kicks of the request and gets data and popualtes the variable  -->
         <!-- <select class="form-control" name="country" formControlName="country" required (change)="getStateBasedOnCountry($event.target.value)">           -->
-            <select class="form-control" name="country" formControlName="country" required *ngIf="countries$ | async as countries">
+            <select class="form-control" name="country" formControlName="country" required *ngIf="countries$ | async as countries" (change)="onSelected($event.target.value)">
           <option selected ="selected" value="">--Select Country--</option> 
             <option *ngFor = "let country of countries" [value]="country.id">
                   {{country?.name}} 
             </option>
         </select>
 
-          <div *ngIf = "country.invalid && (country.dirty || country.touched)" class="form-error form-country-error">
+          <div *ngIf = "country.invalid && (country.dirty || country.touched)" class="form-error form-country-error" >
             <div *ngIf = "country.errors.required"> 
                     <div class="form-error form-country-error">
                     This country is not available
@@ -79,9 +80,11 @@
 
     <div class="form-group">
         <label>State</label>
-        <select class="form-control" name="state" formControlName="state" required>
+        <!-- <select class="form-control" name="state" formControlName="state" required> -->
+            <select class="form-control" name="state" formControlName="state" required *ngIf="countryWithStates$ | async as states">
             <option selected value="">--Select State--</option>
-            <option *ngFor = "let state of filteredStates" value ={{state?.id}}>
+            <!-- <option *ngFor = "let state of filteredStates" value ={{state?.id}}> -->
+                <option *ngFor = "let state of states" value ={{state?.id}}>
                 {{state?.name}} 
             </option>
         </select>
