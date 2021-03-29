@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { NgForm , FormGroup ,FormBuilder} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
@@ -8,14 +8,16 @@ import { SignupData } from '../../models/signup-data.model';
 import { Country } from '../../models/country.model';
 import { State } from '../../models/state.model';
 import { subscribeOn, tap } from 'rxjs/operators';
-import { interval, Subscription } from 'rxjs';
+import { combineLatest, interval, Subscription ,Subject} from 'rxjs';
 import { ConfirmedValidator } from '../../confirmed.validator';
     
 
 @Component({
   selector: 'signup-form',
   templateUrl: './signup-form.component.html',
-  styleUrls: ['./signup-form.component.scss']
+  styleUrls: ['./signup-form.component.scss',],
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 
 
@@ -25,11 +27,19 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
   filteredStates : State[];
   allStates : State[];
 //Subscription objects created so that the unsusbcribe on onDestroy is done
- subscriptionCountry : Subscription
- subscriptionStates : Subscription[] = [] //Throws error
- subscriptionSignUp : Subscription
+  subscriptionCountry : Subscription
+  subscriptionStates : Subscription[] = [] //Throws error
+  subscriptionSignUp : Subscription
+  // Declarative pattern of retrieving data , $ - Represents observable !
+  // No need of ngOnInit() 
+  // Binding directly with Observable , we can use onPush change detectionStrategy
+
+  countries$=this.countriesService.countries$;
+  countryWithStates$=this.countriesService.countryWithStates$;
 
 
+ 
+  
   user: SignupData = {
     username: '',
     email: '',
@@ -52,8 +62,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
     private countriesService: CountriesService,
     private signupService: SignupService, 
     private router: Router) {  }
-
-    countries$=this.countriesService.countries$;
+  
 
   ngOnInit():void {
 
@@ -67,11 +76,13 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
       //phoneNumber: ['', [Validators.required, Validators.pattern('^\+\d(-\d{3}){2}-\d{4}$')]]// 10 numbers
       country: [, Validators.required],
       state: [, Validators.required],
-    //   confirmPassword :['', [Validators.required]]
-    // }, { 
-    //   validator: ConfirmedValidator('password', 'confirm_password')
-    // })
+  
     });
+  }
+
+  onSelected(countryId :number) : void {
+    console.log(countryId);
+    this.countriesService.getStates(countryId);
   }
 
  //Set the user object with data recived in the profileForm
@@ -104,8 +115,10 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
   //   // lifecycle hooks - Angular components (distroy - you can unsubscribe here) 
   //   //Design pattern - 
   // }
-// Get the state based on country selected
-//Currently , the id is passed but no list sent back from service
+  
+  
+  // Get the state based on country selected
+ 
   // getStateBasedOnCountry(countryId:number)
   // {  
   //   //Array the subscription ..as the subscription does not get override..
@@ -141,8 +154,7 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
         response => {
          console.log(response);
          console.log('Registration successful');
-         this.navigateToDetails();
-        
+         this.navigateToDetails();        
          },
          error => 
          {
@@ -190,9 +202,9 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
   // To unsubscribe to the subscribed call to avoid memory leak
   ngOnDestroy()
   {
-    this.subscriptionCountry.unsubscribe();
-    this.subscriptionStates.forEach((sub) => sub.unsubscribe())
-    this.subscriptionSignUp.unsubscribe();
+    // this.subscriptionCountry.unsubscribe();
+    // this.subscriptionStates.forEach((sub) => sub.unsubscribe())
+    // this.subscriptionSignUp.unsubscribe();
   }
 
   // Plugin Prettier and VSCode ..
