@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { NgForm , FormGroup ,FormBuilder} from '@angular/forms';
+import { NgForm , FormGroup ,FormBuilder, FormControl} from '@angular/forms';
 import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { CountriesService } from '../../services/countries.service';
@@ -76,12 +76,21 @@ export class SignupFormComponent implements OnInit ,OnDestroy {
       //phoneNumber: ['', [Validators.required, Validators.pattern('^\+\d(-\d{3}){2}-\d{4}$')]]// 10 numbers
       country: [, Validators.required],
       state: [, Validators.required],
+
+      //Clear it manually
   
     });
+
+    const test = (this.profileForm.controls['country'] as FormControl).valueChanges.subscribe((val) => this.profileForm.controls['state'].patchValue(null));
+
   }
 
+  
+
   onSelected(countryId :number) : void {
-    console.log(countryId);
+  //console.log(countryId);
+    
+    // Reactive way to handle above , 
     this.countriesService.getStates(countryId);
   }
 

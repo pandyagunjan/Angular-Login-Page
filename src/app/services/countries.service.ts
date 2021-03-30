@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable,Subject,combineLatest, empty, pipe } from 'rxjs';
-import { filter, map, take, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, take, tap } from 'rxjs/operators';
 
 import { Country } from '../models/country.model';
 import { State } from '../models/state.model';
@@ -20,30 +20,28 @@ export class CountriesService {
 
 private objPath='assets/data.json';
 //Represents Observable.
-
-countries$ = this.http.get<Country[]>(this.objPath).pipe(map(res => res["countries"]));
-states$ = this.http.get<State[]>(this.objPath).pipe(map(res => res["states"]));
-
-// statesBasedonCountry$ = combineLatest([this.countries$ ,this.states$]).
-// pipe(
-//   map(([countries,states]) =>
-//   countries.map(
-//   c => 
-//   ({...c ,
-//   state : states.find(s => s.countryId == c.id).name
-// } as State))));
+//Caching - shareReplay()
+countries$ = this.http.get<Country[]>(this.objPath).pipe(map(res => res["countries"]),shareReplay());
+states$ = this.http.get<State[]>(this.objPath).pipe(map(res => res["states"]),shareReplay());
 
 
-
+//action stream , Special type of Observable , multicast
+//Subject can be both Observer and Obervable
 private countrySelectionAction = new Subject<number>();
 
 countrySelectionAction$=this.countrySelectionAction.asObservable();
 
-countryWithStates$=combineLatest([this.countrySelectionAction,this.states$]).pipe((map(([selectedCountryId,states]) =>
+
+//Merge the streams
+countryWithStates$=combineLatest([this.countrySelectionAction$,this.states$]).pipe((map(([selectedCountryId,states]) =>
 states.filter(state => state.countryId == selectedCountryId) ) ));
-//console.log(countryWithStates$);
 
 
+//Emitted a value on action
+public getStates(countryId: number | null): void{
+ console.log("Country ID from Service : " , countryId);
+ this.countrySelectionAction.next(countryId);
+}
 
   public getCountries(): Observable<Country[]> {
      let countries = this.http.get<Country[]>("assets/data.json");
@@ -57,10 +55,16 @@ states.filter(state => state.countryId == selectedCountryId) ) ));
   //   return this.http.get<State[]>(this.objPath).pipe(map(res => res["states"].filter(res => res.countryId == 1)));
   //  }
 
+// statesBasedonCountry$ = combineLatest([this.countries$ ,this.states$]).
+// pipe(
+//   map(([countries,states]) =>
+//   countries.map(
+//   c => 
+//   ({...c ,
+//   state : states.find(s => s.countryId == c.id).name
+// } as State))));
 
-   public getStates(countryId: number | null): void{
-     console.log("Country ID from Service : " , countryId);
-    console.log(this.countrySelectionAction.next(countryId));
-    console.log(this.countryWithStates$);
-   }
+
+
+   
 }
